@@ -109,7 +109,26 @@ if ($devices.Count -eq 0) {
     OK "Device detected: $($devices -join ', ')"
 }
 
-# --- 5. Kill stale Metro on port 8081 ---
+# --- 5. Persist correct JAVA_HOME at user level (fixes machine-level trailing-backslash bug) ---
+$currentUserJH = [Environment]::GetEnvironmentVariable("JAVA_HOME", "User")
+if ($currentUserJH -ne $JDK17) {
+    [Environment]::SetEnvironmentVariable("JAVA_HOME", $JDK17, "User")
+    OK "Persisted JAVA_HOME at user level: $JDK17"
+} else {
+    OK "User-level JAVA_HOME already correct."
+}
+
+# --- 6. Kill stale Gradle daemons (they can cache a wrong JDK path) ---
+Info "Stopping stale Gradle daemons..."
+try {
+    $gradlew = Join-Path $PSScriptRoot "android\gradlew.bat"
+    & cmd /c "`"$gradlew`" --stop" 2>&1 | Out-Null
+    OK "Gradle daemons stopped."
+} catch {
+    OK "No Gradle daemons running."
+}
+
+# --- 7. Kill stale Metro on port 8081 ---
 Info "Checking port 8081..."
 try {
     $pids8081 = Get-NetTCPConnection -LocalPort 8081 -State Listen -ErrorAction SilentlyContinue |
@@ -125,7 +144,7 @@ try {
     OK "Port 8081 is free."
 }
 
-# --- 6. Start Metro in a new window ---
+# --- 8. Start Metro in a new window ---
 Info "Starting Metro bundler in a new window..."
 
 $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -141,7 +160,7 @@ Start-Process cmd -ArgumentList '/k', $metroCmd -WorkingDirectory $projectRoot -
 Info "Waiting 8s for Metro to initialise..."
 Start-Sleep -Seconds 8
 
-# --- 7. Build and install ---
+# --- 9. Build and install ---
 Info "Building and installing the app (first run may take a few minutes)..."
 Write-Host ""
 
