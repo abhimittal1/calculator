@@ -132,13 +132,11 @@ $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $jh  = $env:JAVA_HOME
 $ah  = $env:ANDROID_HOME
 
-$metroCmd = "Set-Location '$projectRoot'; " +
-            "`$env:JAVA_HOME='$jh'; " +
-            "`$env:ANDROID_HOME='$ah'; " +
-            "Write-Host 'Metro Bundler - Calculator App' -ForegroundColor Magenta; " +
-            "npx react-native start --reset-cache"
+# Use cmd.exe so Metro gets a real TTY — this enables the interactive
+# keypress menu (a = Android, r = reload, d = Dev Menu, j = debugger).
+$metroCmd = "set JAVA_HOME=$jh && set ANDROID_HOME=$ah && set ANDROID_SDK_ROOT=$ah && title Metro Bundler - Calculator App && npx react-native start --reset-cache"
 
-Start-Process powershell -ArgumentList '-NoExit', '-Command', $metroCmd -WindowStyle Normal
+Start-Process cmd -ArgumentList '/k', $metroCmd -WorkingDirectory $projectRoot -WindowStyle Normal
 
 Info "Waiting 8s for Metro to initialise..."
 Start-Sleep -Seconds 8
@@ -159,7 +157,9 @@ Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host "   App launched successfully!" -ForegroundColor Green
 Write-Host "   Keep the Metro window open during dev" -ForegroundColor Green
-Write-Host "   Fast Refresh: edit any src/ file" -ForegroundColor Green
-Write-Host "   Full reload:  press R in Metro window" -ForegroundColor Green
+Write-Host "   a  - open on Android" -ForegroundColor Green
+Write-Host "   r  - reload app" -ForegroundColor Green
+Write-Host "   d  - open Dev Menu" -ForegroundColor Green
+Write-Host "   j  - open JS debugger" -ForegroundColor Green
 Write-Host "==========================================" -ForegroundColor Green
 Write-Host ""
