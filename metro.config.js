@@ -1,4 +1,4 @@
-const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 const path = require('path');
 
 const defaultConfig = getDefaultConfig(__dirname);
@@ -15,6 +15,8 @@ const config = {
     extraNodeModules: {
       '@': path.resolve(__dirname, 'src'),
     },
+    // Prevent Metro from trying to read zip/binary archives dropped in the project root
+    blockList: [/.*\.zip$/, /.*\.tar$/, /.*\.gz$/],
   },
   watchFolders: [path.resolve(__dirname, 'src')],
 };

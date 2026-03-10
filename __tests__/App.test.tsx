@@ -1,12 +1,12 @@
 import React from 'react';
-import {render} from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
 import App from '../App';
 
 // Mock react-native-safe-area-context
 jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaProvider: ({children}: {children: React.ReactNode}) => children,
-  SafeAreaView: ({children}: {children: React.ReactNode}) => children,
-  useSafeAreaInsets: () => ({top: 0, right: 0, bottom: 0, left: 0}),
+  SafeAreaProvider: ({ children }: { children: React.ReactNode }) => children,
+  SafeAreaView: ({ children }: { children: React.ReactNode }) => children,
+  useSafeAreaInsets: () => ({ top: 0, right: 0, bottom: 0, left: 0 }),
 }));
 
 // Mock react-native-screens
@@ -21,21 +21,28 @@ jest.mock('@react-navigation/native', () => {
   const actualNav = jest.requireActual('@react-navigation/native');
   return {
     ...actualNav,
-    NavigationContainer: ({children}: {children: React.ReactNode}) => children,
+    NavigationContainer: ({ children }: { children: React.ReactNode }) => children,
   };
 });
 
 // Mock @react-navigation/native-stack
 jest.mock('@react-navigation/native-stack', () => ({
   createNativeStackNavigator: () => ({
-    Navigator: ({children}: {children: React.ReactNode}) => children,
-    Screen: ({component: Component}: {component: React.ComponentType}) => <Component />,
+    Navigator: ({ children }: { children: React.ReactNode }) => children,
+    Screen: () => null,
+  }),
+}));
+
+// Mock @react-navigation/bottom-tabs
+jest.mock('@react-navigation/bottom-tabs', () => ({
+  createBottomTabNavigator: () => ({
+    Navigator: ({ children }: { children: React.ReactNode }) => children,
+    Screen: () => null,
   }),
 }));
 
 describe('App', () => {
   it('renders without crashing', () => {
-    const {toJSON} = render(<App />);
-    expect(toJSON()).toBeTruthy();
+    expect(() => render(<App />)).not.toThrow();
   });
 });

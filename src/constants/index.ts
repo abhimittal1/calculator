@@ -15,6 +15,12 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: '@calculator/auth_token',
   COLOR_SCHEME: '@calculator/color_scheme',
   ONBOARDING_DONE: '@calculator/onboarding_done',
+  /** Serialised HistoryEntry[] stored by HistoryManager */
+  HISTORY_ENTRIES: '@calculator/history_entries',
+  /** Boolean string ('true'/'false') for haptic feedback preference */
+  HAPTIC_ENABLED: '@calculator/haptic_enabled',
+  /** Boolean string ('true'/'false') for sound effects preference */
+  SOUND_ENABLED: '@calculator/sound_enabled',
 } as const;
 
 // ─── Pagination ───────────────────────────────────────────────────────────────

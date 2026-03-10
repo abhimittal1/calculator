@@ -1,9 +1,10 @@
 import React from 'react';
-import {render, fireEvent} from '@testing-library/react-native';
-import {DetailsScreen} from '@/screens/DetailsScreen';
+import { render, fireEvent } from '@testing-library/react-native';
+import { DetailsScreen } from '@/screens/DetailsScreen';
+import { ThemeProvider } from '@/theme';
 
 jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: ({children}: {children: React.ReactNode}) => children,
+  SafeAreaView: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const mockGoBack = jest.fn();
@@ -17,7 +18,7 @@ const mockNavigation = {
 const mockRoute = {
   key: 'Details',
   name: 'Details',
-  params: {itemId: 2, title: 'Item Two'},
+  params: { itemId: 2, title: 'Item Two' },
 } as any;
 
 describe('DetailsScreen', () => {
@@ -26,16 +27,21 @@ describe('DetailsScreen', () => {
   });
 
   it('renders the item title and id', () => {
-    const {getByText} = render(
-      <DetailsScreen navigation={mockNavigation} route={mockRoute} />,
+    const { getAllByText, getByText } = render(
+      <ThemeProvider>
+        <DetailsScreen navigation={mockNavigation} route={mockRoute} />
+      </ThemeProvider>,
     );
-    expect(getByText('Item Two')).toBeTruthy();
+    // 'Item Two' appears as the standalone title and inside the description sentence
+    expect(getAllByText('Item Two').length).toBeGreaterThanOrEqual(1);
     expect(getByText('#2')).toBeTruthy();
   });
 
   it('calls goBack when the button is pressed', () => {
-    const {getByTestId} = render(
-      <DetailsScreen navigation={mockNavigation} route={mockRoute} />,
+    const { getByTestId } = render(
+      <ThemeProvider>
+        <DetailsScreen navigation={mockNavigation} route={mockRoute} />
+      </ThemeProvider>,
     );
     fireEvent.press(getByTestId('go-back-button'));
     expect(mockGoBack).toHaveBeenCalledTimes(1);

@@ -1,14 +1,14 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {RootStackScreenProps} from '@/navigation/types';
-import {useTheme, type Theme} from '@/theme';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RootStackScreenProps } from '@/navigation/types';
+import { useTheme, type Theme } from '@/theme';
 
 type Props = RootStackScreenProps<'Details'>;
 
-export function DetailsScreen({route, navigation}: Props): React.JSX.Element {
-  const {itemId, title} = route.params;
-  const {theme} = useTheme();
+export function DetailsScreen({ route, navigation }: Props): React.JSX.Element {
+  const { itemId, title } = route.params;
+  const { theme } = useTheme();
   const s = makeStyles(theme);
 
   return (
@@ -19,14 +19,14 @@ export function DetailsScreen({route, navigation}: Props): React.JSX.Element {
         </View>
         <Text style={s.title}>{title}</Text>
         <Text style={s.description}>
-          This is the detail view for <Text style={s.bold}>{title}</Text>. Add your content
-          here.
+          This is the detail view for <Text style={s.bold}>{title}</Text>. Add your content here.
         </Text>
         <TouchableOpacity
           testID="go-back-button"
           style={s.button}
           activeOpacity={0.8}
-          onPress={() => navigation.goBack()}>
+          onPress={() => navigation.goBack()}
+        >
           <Text style={s.buttonText}>← Go Back</Text>
         </TouchableOpacity>
       </View>
@@ -35,7 +35,7 @@ export function DetailsScreen({route, navigation}: Props): React.JSX.Element {
 }
 
 function makeStyles(theme: Theme) {
-  const {colors, spacing, radii, typography} = theme;
+  const { colors, spacing, radii, typography } = theme;
   return StyleSheet.create({
     container: {
       flex: 1,

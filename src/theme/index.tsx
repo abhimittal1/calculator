@@ -7,21 +7,34 @@
  *   backgroundColor: theme.colors.background.primary
  */
 
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from 'react';
-import {useColorScheme} from 'react-native';
-import {palette} from './colors';
-import {radii, spacing} from './spacing';
-import {typography} from './typography';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { useColorScheme } from 'react-native';
+import { palette } from './colors';
+import { radii, spacing } from './spacing';
+import { typography } from './typography';
 
 // ─── Semantic colour maps ─────────────────────────────────────────────────────
 
-const lightColors = {
+type StateColors = { default: string; subtle: string; contrast: string };
+type ColorsShape = {
+  background: { primary: string; secondary: string; tertiary: string; inverse: string };
+  surface: { default: string; raised: string; overlay: string };
+  text: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    inverse: string;
+    link: string;
+    disabled: string;
+  };
+  border: { default: string; strong: string; focus: string };
+  primary: { default: string; hover: string; pressed: string; subtle: string; contrast: string };
+  success: StateColors;
+  warning: StateColors;
+  error: StateColors;
+};
+
+const lightColors: ColorsShape = {
   // Backgrounds
   background: {
     primary: palette.white,
@@ -59,12 +72,12 @@ const lightColors = {
     contrast: palette.white,
   },
   // Semantic states
-  success: {default: palette.green400, subtle: '#EAFAF1', contrast: palette.white},
-  warning: {default: palette.orange400, subtle: '#FFF8E1', contrast: palette.white},
-  error: {default: palette.red400, subtle: '#FFEEEE', contrast: palette.white},
-} as const;
+  success: { default: palette.green400, subtle: '#EAFAF1', contrast: palette.white },
+  warning: { default: palette.orange400, subtle: '#FFF8E1', contrast: palette.white },
+  error: { default: palette.red400, subtle: '#FFEEEE', contrast: palette.white },
+};
 
-const darkColors: typeof lightColors = {
+const darkColors: ColorsShape = {
   background: {
     primary: palette.black,
     secondary: palette.grey950,
@@ -96,9 +109,9 @@ const darkColors: typeof lightColors = {
     subtle: '#0A1A2E',
     contrast: palette.white,
   },
-  success: {default: palette.green400, subtle: '#0D2B14', contrast: palette.white},
-  warning: {default: palette.orange400, subtle: '#2B1D00', contrast: palette.white},
-  error: {default: palette.red400, subtle: '#2B0A0A', contrast: palette.white},
+  success: { default: palette.green400, subtle: '#0D2B14', contrast: palette.white },
+  warning: { default: palette.orange400, subtle: '#2B1D00', contrast: palette.white },
+  error: { default: palette.red400, subtle: '#2B0A0A', contrast: palette.white },
 } as const;
 
 // ─── Shadow presets (platform-aware at call site) ─────────────────────────────
@@ -106,28 +119,28 @@ const darkColors: typeof lightColors = {
 export const shadows = {
   none: {
     shadowColor: 'transparent',
-    shadowOffset: {width: 0, height: 0},
+    shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
   },
   sm: {
     shadowColor: palette.black,
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 4,
     elevation: 2,
   },
   md: {
     shadowColor: palette.black,
-    shadowOffset: {width: 0, height: 4},
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 4,
   },
   lg: {
     shadowColor: palette.black,
-    shadowOffset: {width: 0, height: 8},
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 8,
@@ -176,14 +189,9 @@ interface ThemeProviderProps {
   initialScheme?: ColorScheme;
 }
 
-export function ThemeProvider({
-  children,
-  initialScheme,
-}: ThemeProviderProps): React.JSX.Element {
+export function ThemeProvider({ children, initialScheme }: ThemeProviderProps): React.JSX.Element {
   const systemScheme = (useColorScheme() ?? 'light') as ColorScheme;
-  const [override, setOverride] = useState<ColorScheme | null>(
-    initialScheme ?? null,
-  );
+  const [override, setOverride] = useState<ColorScheme | null>(initialScheme ?? null);
 
   const colorScheme: ColorScheme = override ?? systemScheme;
   const theme: Theme = colorScheme === 'dark' ? darkTheme : lightTheme;
@@ -200,7 +208,7 @@ export function ThemeProvider({
   }, []);
 
   const value = useMemo<ThemeContextValue>(
-    () => ({theme, colorScheme, toggleTheme, resetToSystemTheme}),
+    () => ({ theme, colorScheme, toggleTheme, resetToSystemTheme }),
     [theme, colorScheme, toggleTheme, resetToSystemTheme],
   );
 

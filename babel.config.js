@@ -1,3 +1,5 @@
+const isProd = process.env.NODE_ENV === 'production';
+
 module.exports = {
   presets: ['@react-native/babel-preset'],
   plugins: [
@@ -11,5 +13,7 @@ module.exports = {
         },
       },
     ],
+    // Strip all console.* calls from production bundles
+    ...(isProd ? ['transform-remove-console'] : []),
   ],
 };
